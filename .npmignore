@@ -1,0 +1,5 @@
+media/
+docs/
+src/
+tsconfig.json
+yarn.lock

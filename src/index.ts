@@ -251,4 +251,12 @@ export class GoPlusLabsV1 {
     this._endpoint = "https://api.gopluslabs.io/api/v1";
     this._auth = authorizationToken;
   }
-}
+};
+
+export {
+  TokenSecurityResponse,
+  AddressSecurityResponse,
+  ApprovalSecurityResponse,
+  NftSecutiryResponse,
+  DappSecurityResponse
+};

@@ -25,7 +25,7 @@ export interface TokenSecurityResponse {
     liquidity: string;
     pair: string;
   }>;
-  anti_whale?: string;
+  is_anti_whale?: string;
   trading_cooldown?: string;
   personal_slippage_modifiable?: string;
   /** Info Security */

@@ -1,13 +1,15 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "declaration": true,
-        "outDir": "./dist",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": ["src/**/*.ts", "test/**/*.ts"]
+	"compilerOptions": {
+	  "target": "es5",
+	  "outDir": "dist",
+	  "sourceMap": true,
+	  "allowJs": true,
+	  "declaration": true,
+	  "allowSyntheticDefaultImports": true,
+	  "esModuleInterop": true,
+	  "moduleResolution": "node",
+	  "strict": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }

@@ -253,6 +253,8 @@ export class GoPlusLabsV1 {
   }
 };
 
+export default GoPlusLabsV1;
+
 export {
   TokenSecurityResponse,
   AddressSecurityResponse,

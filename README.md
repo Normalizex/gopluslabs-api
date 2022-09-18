@@ -15,22 +15,38 @@ Using yarn:
 ```console
 yarn add @normalizex/gopluslabs-api
 ```
-
+Using jsDelivr CDN:
+```html
+<script src="https://cdn.jsdelivr.net/npm/@normalizex/gopluslabs-api/dist/index.browser.min.js"></script>
+```
+Using unpkg CDN:
+```html
+<script src="https://unpkg.com/@normalizex/gopluslabs-api/dist/index.browser.min.js"></script>
+```
 ***
 # Documentation
 * You can find full documentation [here](https://docs.gopluslabs.io/), this library only acts as a convenient wrapper for all requests, does not modify the request response.
 ***
 # Usage
+NodeJS (ES6)
 ```js
 import { GoPlusLabsV1 } from '@normalizex/gopluslabs-api';
 const goPlus = new GoPlusLabsV1();
 ```
+NodeJS (CommonJS)
+```js
+const GoPlusLabs = require('@normalizex/gopluslabs-api').default;
+const goPlus = new GoPlusLabs();
+```
+Browser:
+```html
+<script type="text/javascript">
+const goPlus = new GoPlusLabs();
+</script>
+```
+
 # Example
 ```js
-import { GoPlusLabsV1 } from '@normalizex/gopluslabs-api';
-
-const goPlus = new GoPlusLabsV1();
-
 goPlus.supportedChains().then((chains) => {
     /**
         { id: '1', name: 'eth' },

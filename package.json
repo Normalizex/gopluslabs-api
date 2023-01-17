@@ -1,6 +1,6 @@
 {
   "name": "@normalizex/gopluslabs-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Open, permissionless, user-driven security service platform",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

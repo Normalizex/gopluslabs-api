@@ -42,7 +42,7 @@ export class GoPlusLabs {
    * @param auth_token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Contract Security, Trading Security, Info Security.
    */
-  public token = (
+  public tokenSecurity = (
     chainId: number | string,
     contract: string,
     auth_token?: string
@@ -87,7 +87,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Free, timely and comprehensive malicious address library.
    */
-  public address = (
+  public addressSecurity = (
     chainId: number | string,
     targetAddress: string,
     token?: string
@@ -124,7 +124,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Detect risks of token approvals
    */
-  public approval = (
+  public approvalSecurity = (
     chainId: number | string,
     targetContract: string | string[],
     token?: string
@@ -162,7 +162,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Detect risks of token approvals
    */
-  public tokenApproval = (
+  public erc20ApprovalSecurity = (
     chainId: number | string,
     addresses: string | string[],
     token?: string
@@ -202,7 +202,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns NFT authenticity detection platform
    */
-  public nft = (
+  public nftSecurity = (
     chainId: number | string,
     targetContract: string | string[],
     token?: string
@@ -240,7 +240,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns ERC721 NFT Approval Security
    */
-  public nft721 = (
+  public erc721ApprovalSecurity = (
     chainId: number | string,
     addresses: string | string[],
     token?: string
@@ -280,7 +280,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns ERC1155 NFT Approval Security
    */
-  public nft1155 = (
+  public erc1155ApprovalSecurity = (
     chainId: number | string,
     addresses: string | string[],
     token?: string
@@ -319,7 +319,7 @@ export class GoPlusLabs {
    * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Aggregate dApp security info for quick risk alerts
    */
-  public dapp = (url: string, token?: string) =>
+  public dappSecurity = (url: string, token?: string) =>
     axios
       .get<{
         code: number;
@@ -380,7 +380,7 @@ export class GoPlusLabs {
    * @param sign - Signature
    * @returns `access_token` - API call credential, `expires_in` - The time to expiration of the API call credential (access_token), in seconds.
    */
-  public acessToken = (app_key: string, time: string | number, sign: string) =>
+  public getAccessToken = (app_key: string, time: string | number, sign: string) =>
     axios
       .post<{
         code: number;

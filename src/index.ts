@@ -1,16 +1,28 @@
-import axios from "axios";
-
 import {
   TokenSecurityResponse,
   AddressSecurityResponse,
-  ApprovalSecurityResponse,
+  ApprovalV1SecurityResponse,
   NftSecutiryResponse,
   DappSecurityResponse,
+  ApprovalV2SecurityResponse,
+  NftV2SequrityResponse,
+  InputDecodeResponse,
+  PhishingSiteResponse,
 } from "./types/responses";
 
-export class GoPlusLabsV1 {
+import axios from "axios";
+
+export class GoPlusLabs {
   private _endpoint;
-  private _auth;
+  private _endpointv2;
+  private _token;
+
+  /**
+   * @param token - Set new token as default for requests
+   */
+  public setToken = (token: string) => {
+    this._token = token;
+  };
 
   /**
    * @returns Get Supported blockchains
@@ -26,28 +38,28 @@ export class GoPlusLabsV1 {
 
   /**
    * @param chainId - The `chian id` of the blockchain.
-   * @param contracts - The contract address or addresses of tokens, `string`.
-   * @param authToken - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @param contract - The contract address of tokens.
+   * @param auth_token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Contract Security, Trading Security, Info Security.
    */
-  public tokens = (
+  public token = (
     chainId: number | string,
-    contracts: string,
-    authToken?: string
+    contract: string,
+    auth_token?: string
   ) =>
     axios
       .get<{
         code: number;
         message: string;
         msg?: string;
-        result: Array<any> | { [address: string]: TokenSecurityResponse };
+        result: { [address: string]: TokenSecurityResponse };
       }>(
         `${
           this._endpoint
-        }/token_security/${chainId}?contract_addresses=${contracts.toLowerCase()}`,
+        }/token_security/${chainId}?contract_addresses=${contract.toLowerCase()}`,
         {
           headers: {
-            Authorization: authToken || this._auth || "",
+            Authorization: auth_token || this._token || "",
           },
         }
       )
@@ -60,32 +72,25 @@ export class GoPlusLabsV1 {
             }`
           );
         if (Array.isArray(audits))
-          throw new Error("No contract audits not detected");
+          throw new Error("Contract audits not detected");
 
-        const audit = Object.keys(audits).map((contract) => {
-          const audit = audits[contract];
-
-          return {
-            address: contract,
-            ...audit,
-          };
-        })[0];
+        const audit = audits[contract];
 
         if (!audit) throw new Error("Information not found");
 
-        return audit;
+        return { address: contract, ...audit };
       });
 
   /**
    * @param chainId - The `chian id` of the blockchain.
    * @param targetAddress - `Address` to be check.
-   * @param authToken - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Free, timely and comprehensive malicious address library.
    */
   public address = (
     chainId: number | string,
     targetAddress: string,
-    authToken?: string
+    token?: string
   ) =>
     axios
       .get<{
@@ -97,7 +102,7 @@ export class GoPlusLabsV1 {
         `${this._endpoint}/address_security/${targetAddress}?chain_id=${chainId}`,
         {
           headers: {
-            Authorization: authToken || this._auth || "",
+            Authorization: token || this._token || "",
           },
         }
       )
@@ -115,26 +120,66 @@ export class GoPlusLabsV1 {
 
   /**
    * @param chainId - The `chian id` of the blockchain.
-   * @param targetContract - `Address` to be check.
-   * @param authToken - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @param targetContract - Contract needs to be detected
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Detect risks of token approvals
    */
   public approval = (
     chainId: number | string,
     targetContract: string | string[],
-    authToken?: string
+    token?: string
   ) =>
     axios
       .get<{
         code: number;
         message: string;
         msg?: string;
-        result: ApprovalSecurityResponse;
+        result: ApprovalV1SecurityResponse;
       }>(
-        `${this._endpoint}/address_security/${targetContract}?chain_id=${chainId}`,
+        `${this._endpoint}/approval_security/${chainId}?contract_addresses=${targetContract}`,
         {
           headers: {
-            Authorization: authToken || this._auth || "",
+            Authorization: token || this._token || "",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.msg || !response.data.result)
+          throw new Error(
+            `Error code: ${response.data.code} | ${
+              response.data.msg || response.data.message
+            }`
+          );
+
+        const audit = response.data.result;
+
+        return audit;
+      });
+
+  /**
+   * @param chainId - The `chian id` of the blockchain.
+   * @param addresses - EOA addresses or address
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @returns Detect risks of token approvals
+   */
+  public tokenApproval = (
+    chainId: number | string,
+    addresses: string | string[],
+    token?: string
+  ) =>
+    axios
+      .get<{
+        code: number;
+        message: string;
+        msg?: string;
+        result: ApprovalV2SecurityResponse;
+      }>(
+        `${
+          this._endpointv2
+        }/token_approval_security/${chainId}?addresses=${addresses.toString()}`,
+        {
+          headers: {
+            Authorization: token || this._token || "",
           },
         }
       )
@@ -154,13 +199,13 @@ export class GoPlusLabsV1 {
   /**
    * @param chainId - The `chian id` of the blockchain.
    * @param targetContract - `Address` to be check.
-   * @param authToken - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns NFT authenticity detection platform
    */
   public nft = (
     chainId: number | string,
     targetContract: string | string[],
-    authToken?: string
+    token?: string
   ) =>
     axios
       .get<{
@@ -172,7 +217,87 @@ export class GoPlusLabsV1 {
         `${this._endpoint}/nft_security/${chainId}?contract_addresses=${targetContract}`,
         {
           headers: {
-            Authorization: authToken || this._auth || "",
+            Authorization: token || this._token || "",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.msg || !response.data.result)
+          throw new Error(
+            `Error code: ${response.data.code} | ${
+              response.data.msg || response.data.message
+            }`
+          );
+
+        const audit = response.data.result;
+
+        return audit;
+      });
+
+  /**
+   * @param chainId - The `chian id` of the blockchain.
+   * @param addresses - EOA address
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @returns ERC721 NFT Approval Security
+   */
+  public nft721 = (
+    chainId: number | string,
+    addresses: string | string[],
+    token?: string
+  ) =>
+    axios
+      .get<{
+        code: number;
+        message: string;
+        msg?: string;
+        result: NftV2SequrityResponse;
+      }>(
+        `${
+          this._endpointv2
+        }/nft721_approval_security/${chainId}?addresses=${addresses.toString()}`,
+        {
+          headers: {
+            Authorization: token || this._token || "",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.msg || !response.data.result)
+          throw new Error(
+            `Error code: ${response.data.code} | ${
+              response.data.msg || response.data.message
+            }`
+          );
+
+        const audit = response.data.result;
+
+        return audit;
+      });
+
+  /**
+   * @param chainId - The `chian id` of the blockchain.
+   * @param addresses - EOA address
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @returns ERC1155 NFT Approval Security
+   */
+  public nft1155 = (
+    chainId: number | string,
+    addresses: string | string[],
+    token?: string
+  ) =>
+    axios
+      .get<{
+        code: number;
+        message: string;
+        msg?: string;
+        result: NftV2SequrityResponse;
+      }>(
+        `${
+          this._endpointv2
+        }/nft1155_approval_security/${chainId}?addresses=${addresses.toString()}`,
+        {
+          headers: {
+            Authorization: token || this._token || "",
           },
         }
       )
@@ -191,10 +316,10 @@ export class GoPlusLabsV1 {
 
   /**
    * @param url - Site Url
-   * @param authToken - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
    * @returns Aggregate dApp security info for quick risk alerts
    */
-  public dapp = (url: string, authToken?: string) =>
+  public dapp = (url: string, token?: string) =>
     axios
       .get<{
         code: number;
@@ -203,7 +328,7 @@ export class GoPlusLabsV1 {
         result: DappSecurityResponse;
       }>(`${this._endpoint}/dapp_security?url=${url}`, {
         headers: {
-          Authorization: authToken || this._auth || "",
+          Authorization: token || this._token || "",
         },
       })
       .then((response) => {
@@ -219,7 +344,43 @@ export class GoPlusLabsV1 {
         return audit;
       });
 
-  authToken = (app_key: string, time: string | number, sign: string) =>
+  /**
+   * @param url - site url
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   */
+  public phishingSite = (url: string, token?: string) =>
+    axios
+      .get<{
+        code: number;
+        message: string;
+        msg?: string;
+        result: PhishingSiteResponse;
+      }>(`${this._endpoint}/phishing_site?url=${url}`, {
+        headers: {
+          Authorization: token || this._token || "",
+        },
+      })
+      .then((response) => {
+        if (response.data.msg || !response.data.result)
+          throw new Error(
+            `Error code: ${response.data.code} | ${
+              response.data.msg || response.data.message
+            }`
+          );
+
+        const audit = response.data.result;
+
+        return audit;
+      });
+
+  /**
+   *
+   * @param app_key - App key
+   * @param time - Quest timestamp (Second)
+   * @param sign - Signature
+   * @returns `access_token` - API call credential, `expires_in` - The time to expiration of the API call credential (access_token), in seconds.
+   */
+  public acessToken = (app_key: string, time: string | number, sign: string) =>
     axios
       .post<{
         code: number;
@@ -247,18 +408,69 @@ export class GoPlusLabsV1 {
         return response.data.result;
       });
 
+  /**
+   * @param chainId - The `chian id` of the blockchain.
+   * @param data - Transaction input
+   * @param contract_address - Contract address
+   * @param token - Carrying Token obtained through Get Access Token, [Get Access Token](https://docs.gopluslabs.io/reference/access-token)
+   * @returns decoded signature data
+   */
+  public inputDecode = ({
+    chain_id,
+    data,
+    contract_address,
+    token,
+  }: {
+    chain_id: string;
+    data: string;
+    contract_address?: string;
+    token?: string;
+  }) =>
+    axios
+      .post<{
+        code: number;
+        message: string;
+        msg?: string;
+        result: InputDecodeResponse;
+      }>(
+        `${this._endpoint}/abi/input_decode`,
+        { chain_id, contract_address, data },
+        {
+          headers: {
+            Authorization: token || this._token || "",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.msg || !response.data.result)
+          throw new Error(
+            `Error code: ${response.data.code} | ${
+              response.data.msg || response.data.message
+            }`
+          );
+
+        return response.data.result;
+      });
+
+  /**
+   * @param authorizationToken - The Rate Limit is 30 calls/minute. If you require a higher limit than the available plans, please contact us to apply for access token: https://docs.gopluslabs.io/reference/support
+   */
   constructor(authorizationToken?: string) {
     this._endpoint = "https://api.gopluslabs.io/api/v1";
-    this._auth = authorizationToken;
+    this._endpointv2 = "https://api.gopluslabs.io/api/v2";
+    this._token = authorizationToken;
   }
-};
-
-export default GoPlusLabsV1;
+}
 
 export {
   TokenSecurityResponse,
   AddressSecurityResponse,
-  ApprovalSecurityResponse,
+  ApprovalV1SecurityResponse,
+  ApprovalV2SecurityResponse,
   NftSecutiryResponse,
-  DappSecurityResponse
+  NftV2SequrityResponse,
+  DappSecurityResponse,
+  InputDecodeResponse,
+  PhishingSiteResponse
 };

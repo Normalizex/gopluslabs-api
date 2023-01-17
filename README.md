@@ -30,8 +30,8 @@ Using unpkg CDN:
 # Usage
 NodeJS (ES6)
 ```js
-import { GoPlusLabsV1 } from '@normalizex/gopluslabs-api';
-const goPlus = new GoPlusLabsV1();
+import { GoPlusLabs } from '@normalizex/gopluslabs-api';
+const goPlus = new GoPlusLabs();
 ```
 NodeJS (CommonJS)
 ```js

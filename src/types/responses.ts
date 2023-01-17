@@ -36,7 +36,7 @@ export interface TokenSecurityResponse {
   holders: Array<{
     address: string;
     is_locked: string;
-    tag: string;
+    tag: string | null;
     is_contract: string;
     balance: string;
     percent: string;
@@ -59,7 +59,7 @@ export interface TokenSecurityResponse {
     is_contract: string;
     balance: string;
     percent: string;
-    tag: string;
+    tag: string | null;
     locked_detail?: Array<{
       amount: string;
       end_time: string;
@@ -89,7 +89,7 @@ export interface AddressSecurityResponse {
   contract_address: string;
 }
 
-export interface ApprovalSecurityResponse {
+export interface ApprovalV1SecurityResponse {
   contract_name: string;
   tag: string | null;
   is_contract: string;
@@ -99,6 +99,38 @@ export interface ApprovalSecurityResponse {
   is_proxy: string;
   trust_list: string;
   doubt_list: string;
+  malicious_behavior: string[];
+}
+
+export interface ApprovalV2SecurityResponse {
+  token_address: string;
+  chain_id: string;
+  token_name: string;
+  token_symbol: string;
+  decimals: number;
+  balance: string;
+  is_open_source: number;
+  malicious_address: number;
+  malicious_behavior: string[];
+  approved_list: Array<{
+    approved_contract: string;
+    approved_amount: string;
+    approved_time: number;
+    initial_approval_time: string;
+    initial_approval_hash: string;
+    hash: string;
+    address_info: {
+      contract_name: string;
+      tag: string | null;
+      creator_address: string;
+      is_contract: number;
+      doubt_list: number;
+      malicious_behavior: string[];
+      deployed_time: number;
+      trust_list: number;
+      is_open_source: number;
+    };
+  }>;
 }
 
 export interface NftSecutiryResponse {
@@ -133,24 +165,76 @@ export interface NftSecutiryResponse {
   trust_list: number;
 }
 
-export interface DappSecurityResponse{
-    project_name?: string,
-    url: string,
-    is_audit: string,
-    audit_info: Array<{
-        audit_time: string,
-        audit_link: string,
-        audit_firm: string
+export interface NftV2SequrityResponse {
+  nft_address: string;
+  chain_id: string;
+  nft_name: string;
+  nft_symbol: string;
+  is_open_source: number;
+  is_verified: number;
+  malicious_address: number;
+  malicious_behavior: string[];
+  approved_list: Array<{
+    approved_contract: string;
+    initial_approval_time: number;
+    initial_approval_hash: string;
+    approved_time: number;
+    hash: string;
+    approved_for_all: number;
+    approved_token_id: string | null;
+    address_info: {
+      contract_name: string;
+      tag: string | null;
+      creator_address: string;
+      is_contract: number;
+      doubt_list: number;
+      malicious_behavior: string[];
+      deployed_time: number;
+      trust_list: number;
+      is_open_source: number;
+    }
+  }>
+}
+
+export interface DappSecurityResponse {
+  project_name?: string;
+  url: string;
+  is_audit: string;
+  audit_info: Array<{
+    audit_time: string;
+    audit_link: string;
+    audit_firm: string;
+  }>;
+  contracts_security: Array<{
+    chain_id: string;
+    contracts: Array<{
+      contract_address: string;
+      is_open_source: string;
+      creator_address: string;
+      malicious_contract: number;
+      deployment_time: number;
+      malicious_creator: number;
+    }>;
+  }>;
+}
+
+export interface InputDecodeResponse {
+  method: string;
+  params: Array<{
+    type: string;
+    name: string;
+    input: string;
+    address_info: null | Array<{
+      standard: string | null;
+      symbol: string;
+      name: string;
+      contract_name: string;
+      malicious_address: number;
+      is_contract: number;
     }>
-    contracts_security: Array<{
-        chain_id: string,
-        contracts: Array<{
-            contract_address: string,
-            is_open_source: string,
-            creator_address: string,
-            malicious_contract: number,
-            deployment_time: number,
-            malicious_creator: number
-        }>
-    }>
+  }>
+}
+
+export interface PhishingSiteResponse {
+  phishing_site: number;
 }
